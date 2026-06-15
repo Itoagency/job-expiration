@@ -64,11 +64,15 @@ app.get('/api/professions', (req, res) => {
   res.json({ professions: professions.map(p => ({ name: p.name, years: p.years_remaining })) });
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`🚀 Job Expiration API corriendo en http://localhost:${PORT}`);
-  console.log(`📊 ${professions.length} profesiones disponibles`);
-});
+if (require.main === module) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 Job Expiration API corriendo en http://localhost:${PORT}`);
+    console.log(`📊 ${professions.length} profesiones disponibles`);
+  });
+}
+
+module.exports = app;
 
 // Claude AI - analizar cualquier profesión
 app.post('/api/analyze', async (req, res) => {
