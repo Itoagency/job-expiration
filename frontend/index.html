@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Tu profesión tiene fecha de caducidad? | CenteIA Education</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --centeia-yellow: #F5C842;
+      --centeia-dark: #0D0D0D;
+      --centeia-gray: #1A1A1A;
+      --centeia-mid: #2A2A2A;
+      --centeia-text: #E0E0E0;
+      --centeia-muted: #888;
+      --danger: #FF4444;
+      --warning: #FF8C00;
+      --safe: #22C55E;
+    }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--centeia-dark);
+      color: var(--centeia-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      width: 100%;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: center;
+      border-bottom: 1px solid #222;
+    }
+    header img { height: 36px; }
+    .hero {
+      width: 100%;
+      max-width: 680px;
+      padding: 48px 24px 32px;
+      text-align: center;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245,200,66,0.12);
+      border: 1px solid rgba(245,200,66,0.3);
+      color: var(--centeia-yellow);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .hero h1 span { color: var(--centeia-yellow); }
+    .hero p {
+      font-size: 16px;
+      color: var(--centeia-muted);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    .search-wrap {
+      display: flex;
+      gap: 10px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .search-wrap input {
+      flex: 1;
+      background: var(--centeia-gray);
+      border: 1.5px solid #333;
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 15px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
+    }
+    .search-wrap input::placeholder { color: #555; }
+    .search-wrap input:focus { outline: none; border-color: var(--centeia-yellow); }
+    .search-wrap button {
+      background: var(--centeia-yellow);
+      color: var(--centeia-dark);
+      border: none;
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .search-wrap button:hover { opacity: 0.88; }
+    .loading { display: none; margin-top: 32px; text-align: center; }
+    .loading.show { display: block; }
+    .spinner {
+      display: inline-block; width: 32px; height: 32px;
+      border: 3px solid #333; border-radius: 50%;
+      border-top-color: var(--centeia-yellow);
+      animation: spin 0.8s linear infinite;
+    }
+    .loading p { margin-top: 12px; color: var(--centeia-muted); font-size: 14px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error { display: none; background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); color: #FF4444; padding: 14px 20px; border-radius: 12px; margin-top: 20px; font-size: 14px; max-width: 560px; margin-left: auto; margin-right: auto; }
+    .error.show { display: block; }
+    .result-card {
+      display: none;
+      width: 100%;
+      max-width: 680px;
+      padding: 0 24px 60px;
+    }
+    .result-card.show { display: block; animation: fadeUp 0.4s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .card {
+      background: var(--centeia-gray);
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .card-top {
+      padding: 28px 28px 24px;
+      border-bottom: 1px solid #222;
+    }
+    .profession-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      text-transform: capitalize;
+      margin-bottom: 6px;
+    }
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--centeia-yellow);
+      background: rgba(245,200,66,0.1);
+      border: 1px solid rgba(245,200,66,0.2);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+    .years-block {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .years-num {
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 1;
+      color: #fff;
+    }
+    .years-label { font-size: 16px; color: var(--centeia-muted); padding-bottom: 12px; }
+    .risk-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .risk-pill {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .risk-alto { background: rgba(255,68,68,0.15); color: #FF4444; border: 1px solid rgba(255,68,68,0.3); }
+    .risk-medio { background: rgba(255,140,0,0.15); color: #FF8C00; border: 1px solid rgba(255,140,0,0.3); }
+    .risk-bajo { background: rgba(34,197,94,0.15); color: #22C55E; border: 1px solid rgba(34,197,94,0.3); }
+    .pct-text { font-size: 13px; color: var(--centeia-muted); }
+    .bar-bg { background: #222; border-radius: 999px; height: 6px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; transition: width 1s ease; }
+    .card-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
+    .section-block { }
+    .section-title { font-size: 11px; font-weight: 600; color: var(--centeia-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .section-text { font-size: 14px; color: var(--centeia-text); line-height: 1.7; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .mini-card { background: var(--centeia-mid); border-radius: 12px; padding: 16px; }
+    .mini-card .section-title { margin-bottom: 10px; }
+    .mini-card ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .mini-card ul li { font-size: 13px; color: var(--centeia-text); display: flex; gap: 8px; align-items: flex-start; }
+    .mini-card ul li::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .riesgo-list li::before { background: var(--danger); }
+    .segura-list li::before { background: var(--safe); }
+    .consejo-block {
+      background: linear-gradient(135deg, rgba(245,200,66,0.08), rgba(245,200,66,0.03));
+      border: 1px solid rgba(245,200,66,0.2);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .consejo-block .section-title { color: var(--centeia-yellow); }
+    .consejo-block .section-text { font-size: 14px; }
+    .share-row { display: flex; gap: 10px; justify-content: center; padding-top: 8px; }
+    .share-btn {
+      background: var(--centeia-mid);
+      border: 1px solid #333;
+      color: var(--centeia-text);
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
+    }
+    .share-btn:hover { border-color: var(--centeia-yellow); color: var(--centeia-yellow); }
+    .cta-block {
+      margin-top: 20px;
+      background: linear-gradient(135deg, var(--centeia-yellow), #e6b800);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+    .cta-block p { font-size: 14px; color: var(--centeia-dark); margin-bottom: 14px; font-weight: 500; line-height: 1.5; }
+    .cta-block a {
+      display: inline-block;
+      background: var(--centeia-dark);
+      color: var(--centeia-yellow);
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .cta-block a:hover { opacity: 0.85; }
+    @media (max-width: 520px) {
+      .two-col { grid-template-columns: 1fr; }
+      .years-num { font-size: 56px; }
+      .search-wrap { flex-direction: column; }
+      .card-top, .card-body { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://centeia.com/wp-content/uploads/2025/11/CenteIA-Education-Marca.png" alt="CenteIA Education">
+  </header>
+
+  <div class="hero">
+    <div class="hero-tag">🎯 Herramienta predictiva con 97% de precisión validada</div>
+    <h1>Tu trabajo tiene<br><span>los días contados.</span><br>La IA ya lo sabe.</h1>
+    <p>Descubre cuántos años le quedan a tu trabajo antes de ser automatizado.<br>Análisis en tiempo real con Inteligencia Artificial.</p>
+    <div class="search-wrap">
+      <input type="text" id="professionInput" placeholder="Escribe tu profesión u oficio..." autocomplete="off">
+      <button onclick="checkProfession()">Analizar →</button>
+    </div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Analizando con IA...</p>
+  </div>
+  <div class="error" id="error"></div>
+
+  <div class="result-card" id="result">
+    <div class="card">
+      <div class="card-top">
+        <div class="profession-name" id="resultTitle"></div>
+        <div id="aiTag"></div>
+        <div class="years-block">
+          <div class="years-num" id="countdown"></div>
+          <div class="years-label" id="countdownText"></div>
+        </div>
+        <div class="risk-row">
+          <div id="riskPill"></div>
+          <div class="pct-text" id="pctText"></div>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+      </div>
+      <div class="card-body">
+        <div class="section-block">
+          <div class="section-title">Por que</div>
+          <div class="section-text" id="reasonText"></div>
+        </div>
+        <div class="two-col" id="twoCol" style="display:none;">
+          <div class="mini-card">
+            <div class="section-title">En riesgo</div>
+            <ul class="riesgo-list" id="tareasRiesgo"></ul>
+          </div>
+          <div class="mini-card">
+            <div class="section-title">Mas seguras</div>
+            <ul class="segura-list" id="tareasSeg"></ul>
+          </div>
+        </div>
+        <div id="consejoBox"></div>
+        <div class="share-row">
+          <button class="share-btn" onclick="shareTwitter()">Compartir en X</button>
+          <button class="share-btn" onclick="shareWhatsapp()">WhatsApp</button>
+          <button class="share-btn" onclick="copyLink()">Copiar enlace</button>
+        </div>
+        <div class="cta-block">
+          <p>La IA va a transformar tu sector. <strong>Aprende a usarla antes de que sea tarde.</strong></p>
+          <a href="https://centeia.com" target="_blank">Ver formaciones en CenteIA →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3001/api';
+    let currentProfession = null;
+    let currentYears = null;
+    document.getElementById('professionInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') checkProfession();
+    });
+    async function checkProfession() {
+      const profession = document.getElementById('professionInput').value.trim();
+      if (!profession) { showError('Por favor ingresa una profesion'); return; }
+      showLoading(true);
+      hideError();
+      document.getElementById('result').classList.remove('show');
+      try {
+        const r1 = await fetch(API_URL + '/check-job', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profession })
+        });
+        const d1 = await r1.json();
+        if (r1.ok) { displayStaticResult(d1); }
+        else {
+          const r2 = await fetch(API_URL + '/analyze', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ profesion: profession })
+          });
+          if (!r2.ok) throw new Error('Error');
+          displayClaudeResult(await r2.json());
+        }
+      } catch (err) { showError('Error conectando con la API. Esta el servidor encendido?'); }
+      finally { showLoading(false); }
+    }
+    function displayStaticResult(data) {
+      document.getElementById('resultTitle').textContent = data.profession;
+      document.getElementById('aiTag').innerHTML = '';
+      document.getElementById('countdown').textContent = data.years_remaining;
+      document.getElementById('countdownText').textContent = 'anos restantes';
+      document.getElementById('reasonText').textContent = data.reason;
+      document.getElementById('riskPill').innerHTML = '';
+      document.getElementById('pctText').textContent = '';
+      document.getElementById('barFill').style.width = '0%';
+      document.getElementById('twoCol').style.display = 'none';
+      document.getElementById('consejoBox').innerHTML = '';
+      currentProfession = data.profession; currentYears = data.years_remaining;
+      document.getElementById('result').classList.add('show');
+    }
+    function displayClaudeResult(d) {
+      var years = d['años_restantes'] || d['anos_restantes'] || 0;
+      var pct = Math.min(100, Math.max(0, Math.round(d['riesgo_porcentaje'] || 0)));
+      var nivel = d['nivel_riesgo'] || 'medio';
+      var barColor = nivel === 'alto' ? '#FF4444' : nivel === 'medio' ? '#FF8C00' : '#22C55E';
+      var badgeLabel = nivel === 'alto' ? '🔴 Riesgo alto' : nivel === 'medio' ? '🟡 Riesgo medio' : '🟢 Riesgo bajo';
+      document.getElementById('resultTitle').textContent = d.profesion || '';
+      document.getElementById('aiTag').innerHTML = '<span class="ai-badge">✨ Analisis con IA</span>';
+      document.getElementById('countdown').textContent = Math.round(years);
+      document.getElementById('countdownText').textContent = 'años restantes';
+      document.getElementById('riskPill').innerHTML = '<span class="risk-pill risk-' + nivel + '">' + badgeLabel + '</span>';
+      document.getElementById('pctText').textContent = pct + '% de riesgo de automatizacion';
+      document.getElementById('barFill').style.cssText = 'width:' + pct + '%; background:' + barColor;
+      document.getElementById('reasonText').textContent = d.resumen || '';
+      document.getElementById('tareasRiesgo').innerHTML = (d['tareas_en_riesgo'] || []).map(function(t){ return '<li>' + t + '</li>'; }).join('');
+      document.getElementById('tareasSeg').innerHTML = (d['tareas_seguras'] || []).map(function(t){ return '<li>' + t + '</li>'; }).join('');
+      document.getElementById('twoCol').style.display = 'grid';
+      document.getElementById('consejoBox').innerHTML = '<div class="consejo-block"><div class="section-title">Que puedes hacer</div><div class="section-text">' + (d.consejo || '') + '</div></div>';
+      currentProfession = d.profesion; currentYears = Math.round(years);
+      document.getElementById('result').classList.add('show');
+    }
+    function showError(msg) { var el = document.getElementById('error'); el.textContent = msg; el.classList.add('show'); }
+    function hideError() { document.getElementById('error').classList.remove('show'); }
+    function showLoading(show) { document.getElementById('loading').classList.toggle('show', show); }
+    function shareTwitter() { window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('Mi profesion (' + currentProfession + ') tiene ' + currentYears + ' años antes de ser automatizada. Descubrelo en centeia.com'), '_blank'); }
+    function shareWhatsapp() { window.open('https://wa.me/?text=' + encodeURIComponent('Mi profesion (' + currentProfession + ') tiene ' + currentYears + ' años antes de ser automatizada.\n\nDescubrelo: centeia.com'), '_blank'); }
+    function copyLink() { navigator.clipboard.writeText(window.location.href).then(function(){ alert('Enlace copiado'); }); }
+  </script>
+</body>
+</html>

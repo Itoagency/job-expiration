@@ -1,0 +1,106 @@
+{
+  "professions": [
+    {
+      "name": "abogado",
+      "years_remaining": 5,
+      "reason": "AI ya genera contratos básicos y analiza jurisprudencia",
+      "examples": "ChatGPT Premium, LawGeex"
+    },
+    {
+      "name": "contador",
+      "years_remaining": 3,
+      "reason": "Automatización de auditorías y declaraciones de impuestos",
+      "examples": "TurboTax, SAP"
+    },
+    {
+      "name": "diseñador gráfico",
+      "years_remaining": 2,
+      "reason": "Generación automática de diseños con IA",
+      "examples": "Midjourney, DALL-E, Canva AI"
+    },
+    {
+      "name": "desarrollador",
+      "years_remaining": 4,
+      "reason": "Copilot y Claude generan código cada vez más complejo",
+      "examples": "GitHub Copilot, Claude, ChatGPT"
+    },
+    {
+      "name": "analista de datos",
+      "years_remaining": 3,
+      "reason": "IA genera reportes y insights automáticamente",
+      "examples": "Power BI AI, Tableau"
+    },
+    {
+      "name": "periodista",
+      "years_remaining": 2,
+      "reason": "Escritura automática de noticias ya en uso",
+      "examples": "AP Stylebook, Reuters"
+    },
+    {
+      "name": "community manager",
+      "years_remaining": 1,
+      "reason": "Bots generan posts y responden consultas",
+      "examples": "Buffer AI, Meta Suite"
+    },
+    {
+      "name": "traductor",
+      "years_remaining": 2,
+      "reason": "Google Translate y DeepL ya reemplazan muchas tareas",
+      "examples": "DeepL, Google Translate"
+    },
+    {
+      "name": "call center",
+      "years_remaining": 1,
+      "reason": "Voicebots y chatbots ya manejan 80% de consultas",
+      "examples": "Callbot, NVIDIA AI"
+    },
+    {
+      "name": "marketing",
+      "years_remaining": 3,
+      "reason": "IA genera campañas y optimiza automáticamente",
+      "examples": "Brand Radar, Google Performance Max"
+    },
+    {
+      "name": "asistente administrativo",
+      "years_remaining": 2,
+      "reason": "Automatización de tareas administrativas",
+      "examples": "Zapier, Make"
+    },
+    {
+      "name": "profesor",
+      "years_remaining": 6,
+      "reason": "Tutoría personalizada con IA está en desarrollo",
+      "examples": "Khan Academy AI, Khanmigo"
+    },
+    {
+      "name": "vendedor",
+      "years_remaining": 4,
+      "reason": "Sales automation y CRM IA aún necesitan toque humano",
+      "examples": "Salesforce Einstein, HubSpot"
+    },
+    {
+      "name": "fotógrafo",
+      "years_remaining": 5,
+      "reason": "IA mejora pero no reemplaza la dirección creativa",
+      "examples": "Adobe Firefly, Photoshop AI"
+    },
+    {
+      "name": "electricista",
+      "years_remaining": 10,
+      "reason": "Trabajos manuales necesitan presencia física",
+      "examples": "Robots limitados"
+    },
+    {
+      "name": "plomero",
+      "years_remaining": 10,
+      "reason": "Trabajos en sitio requieren mano de obra humana",
+      "examples": "Robots en desarrollo"
+    },
+    {
+      "name": "chef",
+      "years_remaining": 8,
+      "reason": "Gastronomía aún requiere creatividad y experiencia",
+      "examples": "Robots en cocinas industriales"
+    }
+  ]
+}
