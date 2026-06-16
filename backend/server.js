@@ -12,8 +12,10 @@ const professions = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'professions.json'), 'utf-8')
 ).professions;
 
-// Normalizar texto para búsqueda
 const normalize = (text) => text.toLowerCase().trim().replace(/\s+/g, ' ');
+
+const analysisCache = new Map();
+const MIN_CACHE_CHARS = 150;
 
 app.post('/api/check-job', (req, res) => {
   const { profession } = req.body;
@@ -69,6 +71,13 @@ app.post('/api/analyze', async (req, res) => {
   if (!profesion || profesion.trim() === '') {
     return res.status(400).json({ error: 'Profesión requerida' });
   }
+
+  const key = normalize(profesion);
+
+  if (analysisCache.has(key)) {
+    return res.json(analysisCache.get(key));
+  }
+
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -87,6 +96,11 @@ app.post('/api/analyze', async (req, res) => {
     const data = await response.json();
     const text = data.content?.find(b => b.type === 'text')?.text || '';
     const result = JSON.parse(text.replace(/```json|```/g, '').trim());
+
+    if (JSON.stringify(result).length >= MIN_CACHE_CHARS) {
+      analysisCache.set(key, result);
+    }
+
     res.json(result);
   } catch (e) {
     res.status(500).json({ error: 'Error al consultar Claude', detail: e.message });
