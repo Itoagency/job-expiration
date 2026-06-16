@@ -17,6 +17,16 @@ const normalize = (text) => text.toLowerCase().trim().replace(/\s+/g, ' ');
 const analysisCache = new Map();
 const MIN_CACHE_CHARS = 150;
 
+const SHEET_WEBHOOK = 'https://script.google.com/macros/s/AKfycbyG0Hw9CMWSDEWL5AqylbeGAf0baLX4lXy3FOUMEwfH09FFonbO8yN6qAdrXOZTEWC4/exec?gid=0';
+
+function logToSheet(data) {
+  fetch(SHEET_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(() => {});
+}
+
 app.post('/api/check-job', (req, res) => {
   const { profession } = req.body;
 
@@ -75,7 +85,16 @@ app.post('/api/analyze', async (req, res) => {
   const key = normalize(profesion);
 
   if (analysisCache.has(key)) {
-    return res.json(analysisCache.get(key));
+    const cached = analysisCache.get(key);
+    logToSheet({
+      timestamp: new Date().toISOString(),
+      profesion: cached.profesion,
+      años_restantes: cached['años_restantes'],
+      nivel_riesgo: cached.nivel_riesgo,
+      riesgo_porcentaje: cached.riesgo_porcentaje,
+      desde_cache: true
+    });
+    return res.json(cached);
   }
 
   try {
@@ -100,6 +119,15 @@ app.post('/api/analyze', async (req, res) => {
     if (JSON.stringify(result).length >= MIN_CACHE_CHARS) {
       analysisCache.set(key, result);
     }
+
+    logToSheet({
+      timestamp: new Date().toISOString(),
+      profesion: result.profesion,
+      años_restantes: result['años_restantes'],
+      nivel_riesgo: result.nivel_riesgo,
+      riesgo_porcentaje: result.riesgo_porcentaje,
+      desde_cache: false
+    });
 
     res.json(result);
   } catch (e) {
