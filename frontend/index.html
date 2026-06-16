@@ -206,38 +206,28 @@
     }
     .consejo-block .section-title { color: var(--centeia-yellow); }
     .consejo-block .section-text { font-size: 14px; }
-    .share-row { display: flex; gap: 10px; justify-content: center; padding-top: 8px; }
-    .share-btn {
-      background: var(--centeia-mid);
-      border: 1px solid #333;
-      color: var(--centeia-text);
-      border-radius: 10px;
-      padding: 10px 18px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      transition: border-color 0.2s;
-    }
-    .share-btn:hover { border-color: var(--centeia-yellow); color: var(--centeia-yellow); }
     .cta-block {
       margin-top: 20px;
       background: linear-gradient(135deg, var(--centeia-yellow), #e6b800);
       border-radius: 16px;
-      padding: 24px;
+      padding: 28px 24px;
       text-align: center;
     }
-    .cta-block p { font-size: 14px; color: var(--centeia-dark); margin-bottom: 14px; font-weight: 500; line-height: 1.5; }
+    .cta-intro { font-size: 14px; color: var(--centeia-dark); font-weight: 500; line-height: 1.5; margin-bottom: 18px; }
+    .cta-title { font-size: 20px; font-weight: 800; color: var(--centeia-dark); margin-bottom: 4px; letter-spacing: -0.01em; }
+    .cta-subtitle { font-size: 13px; font-weight: 700; color: var(--centeia-dark); opacity: 0.75; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .cta-desc { font-size: 14px; color: var(--centeia-dark); line-height: 1.6; margin-bottom: 22px; opacity: 0.85; }
     .cta-block a {
       display: inline-block;
       background: var(--centeia-dark);
       color: var(--centeia-yellow);
-      padding: 12px 28px;
+      padding: 14px 36px;
       border-radius: 10px;
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: 800;
       text-decoration: none;
       transition: opacity 0.2s;
+      letter-spacing: -0.01em;
     }
     .cta-block a:hover { opacity: 0.85; }
     @media (max-width: 600px) {
@@ -254,14 +244,13 @@
       .years-num { font-size: 56px; }
       .risk-row { flex-wrap: wrap; gap: 8px; }
       .two-col { grid-template-columns: 1fr; }
-      .share-row { flex-wrap: wrap; gap: 8px; }
-      .share-btn { flex: 1 1 calc(50% - 4px); text-align: center; padding: 12px 10px; }
+      .cta-title { font-size: 18px; }
+      .cta-block a { padding: 13px 28px; font-size: 15px; }
       .cta-block { padding: 20px 16px; }
     }
     @media (max-width: 380px) {
       .hero-tag { font-size: 10px; letter-spacing: 0.02em; }
       .years-num { font-size: 44px; }
-      .share-btn { flex: 1 1 100%; }
       .card-top, .card-body { padding: 16px; }
     }
   </style>
@@ -318,14 +307,12 @@
           </div>
         </div>
         <div id="consejoBox"></div>
-        <div class="share-row">
-          <button class="share-btn" onclick="shareTwitter()">Compartir en X</button>
-          <button class="share-btn" onclick="shareWhatsapp()">WhatsApp</button>
-          <button class="share-btn" onclick="copyLink()">Copiar enlace</button>
-        </div>
         <div class="cta-block">
-          <p>La IA va a transformar tu sector. <strong>Aprende a usarla antes de que sea tarde.</strong></p>
-          <a href="https://centeia.com" target="_blank">Ver formaciones en CenteIA →</a>
+          <p class="cta-intro">La IA va a transformar tu sector. <strong>Aprende a usarla antes de que sea tarde.</strong></p>
+          <div class="cta-title">APÚNTATE A IA 3 EN 4</div>
+          <div class="cta-subtitle">4 Clases gratuitas y en directo</div>
+          <p class="cta-desc">Para que aprendas a utilizar la Inteligencia Artificial para adelantarte a los cambios y posicionarte en tu sector</p>
+          <a href="https://rebrand.ly/centeia-ia" target="_blank">¡Me apunto!</a>
         </div>
       </div>
     </div>
@@ -333,8 +320,6 @@
 
   <script>
     const API_URL = window.location.protocol === 'file:' ? 'http://localhost:3001/api' : '/api';
-    let currentProfession = null;
-    let currentYears = null;
     document.getElementById('professionInput').addEventListener('keypress', e => {
       if (e.key === 'Enter') checkProfession();
     });
@@ -370,7 +355,6 @@
       document.getElementById('barFill').style.width = '0%';
       document.getElementById('twoCol').style.display = 'none';
       document.getElementById('consejoBox').innerHTML = '';
-      currentProfession = data.profession; currentYears = data.years_remaining;
       document.getElementById('result').classList.add('show');
     }
     function displayClaudeResult(d) {
@@ -391,15 +375,11 @@
       document.getElementById('tareasSeg').innerHTML = (d['tareas_seguras'] || []).map(function(t){ return '<li>' + t + '</li>'; }).join('');
       document.getElementById('twoCol').style.display = 'grid';
       document.getElementById('consejoBox').innerHTML = '<div class="consejo-block"><div class="section-title">Que puedes hacer</div><div class="section-text">' + (d.consejo || '') + '</div></div>';
-      currentProfession = d.profesion; currentYears = Math.round(years);
       document.getElementById('result').classList.add('show');
     }
     function showError(msg) { var el = document.getElementById('error'); el.textContent = msg; el.classList.add('show'); }
     function hideError() { document.getElementById('error').classList.remove('show'); }
     function showLoading(show) { document.getElementById('loading').classList.toggle('show', show); }
-    function shareTwitter() { window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('Mi profesion (' + currentProfession + ') tiene ' + currentYears + ' años antes de ser automatizada. Descubrelo en centeia.com'), '_blank'); }
-    function shareWhatsapp() { window.open('https://wa.me/?text=' + encodeURIComponent('Mi profesion (' + currentProfession + ') tiene ' + currentYears + ' años antes de ser automatizada.\n\nDescubrelo: centeia.com'), '_blank'); }
-    function copyLink() { navigator.clipboard.writeText(window.location.href).then(function(){ alert('Enlace copiado'); }); }
   </script>
 </body>
 </html>
