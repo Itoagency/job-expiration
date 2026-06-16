@@ -19,12 +19,12 @@ const MIN_CACHE_CHARS = 150;
 
 const SHEET_WEBHOOK = 'https://script.google.com/macros/s/AKfycbyG0Hw9CMWSDEWL5AqylbeGAf0baLX4lXy3FOUMEwfH09FFonbO8yN6qAdrXOZTEWC4/exec?gid=0';
 
-function logToSheet(data) {
-  fetch(SHEET_WEBHOOK, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).catch(() => {});
+async function logToSheet(data) {
+  try {
+    const url = new URL(SHEET_WEBHOOK);
+    Object.entries(data).forEach(([k, v]) => url.searchParams.set(k, String(v)));
+    await fetch(url.toString(), { redirect: 'follow' });
+  } catch (_) {}
 }
 
 app.post('/api/check-job', (req, res) => {
@@ -86,14 +86,17 @@ app.post('/api/analyze', async (req, res) => {
 
   if (analysisCache.has(key)) {
     const cached = analysisCache.get(key);
-    logToSheet({
-      timestamp: new Date().toISOString(),
-      profesion: cached.profesion,
-      años_restantes: cached['años_restantes'],
-      nivel_riesgo: cached.nivel_riesgo,
-      riesgo_porcentaje: cached.riesgo_porcentaje,
-      desde_cache: true
-    });
+    await Promise.race([
+      logToSheet({
+        timestamp: new Date().toISOString(),
+        profesion: cached.profesion,
+        años_restantes: cached['años_restantes'],
+        nivel_riesgo: cached.nivel_riesgo,
+        riesgo_porcentaje: cached.riesgo_porcentaje,
+        desde_cache: true
+      }),
+      new Promise(r => setTimeout(r, 2000))
+    ]);
     return res.json(cached);
   }
 
@@ -120,14 +123,17 @@ app.post('/api/analyze', async (req, res) => {
       analysisCache.set(key, result);
     }
 
-    logToSheet({
-      timestamp: new Date().toISOString(),
-      profesion: result.profesion,
-      años_restantes: result['años_restantes'],
-      nivel_riesgo: result.nivel_riesgo,
-      riesgo_porcentaje: result.riesgo_porcentaje,
-      desde_cache: false
-    });
+    await Promise.race([
+      logToSheet({
+        timestamp: new Date().toISOString(),
+        profesion: result.profesion,
+        años_restantes: result['años_restantes'],
+        nivel_riesgo: result.nivel_riesgo,
+        riesgo_porcentaje: result.riesgo_porcentaje,
+        desde_cache: false
+      }),
+      new Promise(r => setTimeout(r, 2000))
+    ]);
 
     res.json(result);
   } catch (e) {
